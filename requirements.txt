@@ -1,0 +1,6 @@
+fastapi == 0.141.1
+requests == 2.34.2
+streamlit ==1.64.0
+sqlalchemy == 2.1.1
+sqlalchemy.orm == 1.2.10
+pydantic == 2.13.5
