@@ -36,7 +36,12 @@ def register_dialoge ():
                         st.success(f"user {register_response['realname']} with username {register_response['username']} succesfuly registered")
 
                     else:
-                        error = response.json().get("detail", "unexpected error")
+                        data = response.json()
+                        if "details" in data:
+                            error = data["details"][0]["message"]
+                        else:
+                            error = data.get("error", "unexpected error")
+
                         st.error(error)
         
 

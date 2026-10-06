@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-
+from argon2 import PasswordHasher
 from sqlalchemy.orm import Session
 
 from models import users as users_model
@@ -10,6 +10,8 @@ from db.database import engine, SessionLocal, Base
 # creating tables in database
 users_model.Base.metadata.create_all(bind=engine)
 
+# using argon hasher to hash password
+password_hasher = PasswordHasher()
 
 register_router = APIRouter()
 
@@ -48,19 +50,24 @@ def register_user (user: users_schema.userRegister, db: Session=Depends(get_db))
             status_code=400,
             detail="This username has already been taken"
             )
+    #hashing
+    hashed_password = password_hasher.hash(user.password)
+
     
     # creating an object based on users model so we can commit it do data base 
     new_user = users_model.users(
         realname= user.realname,
         username= user.username,
-        password= user.password
+        password= hashed_password
     )
 
     # adding new user to database and commit it.
     # then refreshing to get username and realname to show it send it to frontend.
     # it wont send password and id because we choose userresponse for response model.
     db.add(new_user)
+    print("BEFORE COMMIT")
     db.commit()
+    print("AFTER COMMIT")
     db.refresh(new_user)
 
     # finally retuning new user object (without password and id)
