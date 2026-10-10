@@ -53,6 +53,38 @@ def register_dialoge ():
 
 
 
-if st.button("signnnn in"):
+if st.button("sign in"):
     register_dialoge()
+
+
+login_URL= "http://localhost:8000/api/login"
+@st.dialog("loginForm")
+def login_dialoge ():
+    with st.form("Login"):
+        username = st.text_input("User name:")
+        password = st.text_input("Password:", type="password")
+        submit = st.form_submit_button("Login")
+
+        if submit:
+            if not username or not password:
+                st.warning("Please fill all blancks.")
+            else:
+                payload = {
+                    "username": username,
+                    "password": password
+                }
+                try:
+                    response = requests.post(login_URL, json=payload, timeout=10)
+                    if response.status_code== 200:
+                        login_response= response.json()
+                        st.success(f"Wlcome {login_response['user']['realname']}")
+                
+                except requests.exceptions.ConnectionError:
+                    st.error("connection failed")
+                except requests.exceptions.Timeout:
+                    st.error("Timedout")
+
+if st.button("Login"):
+    login_dialoge()
+
 

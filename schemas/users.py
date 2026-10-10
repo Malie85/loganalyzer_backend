@@ -39,3 +39,13 @@ class userRegister (BaseModel):
 class userResponse(BaseModel):
     realname: str
     username: str
+
+
+class userLogin(BaseModel):
+    username: str = Field(...,min_length=2, max_length=30)
+    password: str = Field(...,min_length=8, max_length=64)
+
+class userLoginResponse(BaseModel):
+    message: str
+    user: userResponse
+

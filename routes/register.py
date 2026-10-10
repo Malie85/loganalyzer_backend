@@ -4,11 +4,8 @@ from sqlalchemy.orm import Session
 
 from models import users as users_model
 from schemas import users as users_schema
-from db.database import engine, SessionLocal, Base
+from db.database import engine, SessionLocal, Base, get_db
 
-
-# creating tables in database
-users_model.Base.metadata.create_all(bind=engine)
 
 # using argon hasher to hash password
 password_hasher = PasswordHasher()
@@ -18,13 +15,13 @@ register_router = APIRouter()
 
 # this function make a session from sessionmaker in database.py
 # so we can yield or output it to Register Rout in below, and close it.
-def get_db ():
-    db = SessionLocal()
+# def get_db ():
+#     db = SessionLocal()
 
-    try:
-        yield db
-    finally:
-        db.close()
+#     try:
+#         yield db
+#     finally:
+#         db.close()
 
 # The Register Rout
 # what shape it responses? by response_model
@@ -65,9 +62,7 @@ def register_user (user: users_schema.userRegister, db: Session=Depends(get_db))
     # then refreshing to get username and realname to show it send it to frontend.
     # it wont send password and id because we choose userresponse for response model.
     db.add(new_user)
-    print("BEFORE COMMIT")
     db.commit()
-    print("AFTER COMMIT")
     db.refresh(new_user)
 
     # finally retuning new user object (without password and id)

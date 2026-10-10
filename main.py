@@ -3,9 +3,16 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from routes.register import register_router
+from routes.auth import Login_Router
+from db.database import engine, Base
+from models import users as users_model
 
 #runnig the FAST API
 app = FastAPI()
+
+# creating tables in database
+users_model.Base.metadata.create_all(bind=engine)
+
 
 # here we make an error handler function
 # we do not want to response the whole things to user beacause it includes password or id.
@@ -38,3 +45,4 @@ async def validation_error_handler(
 
 # including ROUTES
 app.include_router(register_router)
+app.include_router(Login_Router)

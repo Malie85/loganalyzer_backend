@@ -9,7 +9,6 @@ SQLalchemy_Datbase_URL =  "sqlite:///database.db"
 # SQLite by default only allows a connection to be used by the thread that created it, but FastAPI uses multiple threads then conflict and error.
 # Solution: connect_args={"check_same_thread": False} disables this restriction, and it's safe because SQLAlchemy manages the session per request. (Only needed for SQLite, not PostgreSQL/MySQL)
 engine = create_engine(SQLalchemy_Datbase_URL, connect_args={"check_same_thread":False})
-print("DATABASE FILE:", os.path.abspath("database.db"))
 
 
 # creating a Session for commit data in data base.
@@ -17,6 +16,15 @@ print("DATABASE FILE:", os.path.abspath("database.db"))
 # its binded to engine variable so we can work with database by this here
 # why LOCAL?? because it isnt the usual session in the world. it is just a session that i made localy in this program.
 SessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
+
+def get_db ():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 # creating a main class for telling data base we are adding TABLES to you not other stuffs.
 # it used in models
