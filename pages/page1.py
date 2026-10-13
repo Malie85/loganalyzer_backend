@@ -1,8 +1,12 @@
 import streamlit as st
 import requests
+import time
+from services.api_client import BASE_URL, get_client
+
+client= get_client()
 
 # this is just streamlit . i dont think it needs to explain.
-register_URL= "http://localhost:8000/api/register"
+register_URL= f"{BASE_URL}/api/register"
 @st.dialog("registerForm")
 def register_dialoge ():
     with st.form("Sign In"):
@@ -29,16 +33,21 @@ def register_dialoge ():
                 }
 
                 try :
-                    response= requests.post(register_URL, json=payload, timeout=10)
+                    response= client.post(register_URL, json=payload, timeout=10)
 
                     if response.status_code == 201:
                         register_response= response.json()
                         st.success(f"user {register_response['realname']} with username {register_response['username']} succesfuly registered")
+                        time.sleep(2)
+                        st.switch_page("pages/page2.py")
+
 
                     else:
                         data = response.json()
                         if "details" in data:
                             error = data["details"][0]["message"]
+                        elif "detail" in data:
+                            error = data["detail"]
                         else:
                             error = data.get("error", "unexpected error")
 
@@ -57,7 +66,7 @@ if st.button("sign in"):
     register_dialoge()
 
 
-login_URL= "http://localhost:8000/api/login"
+login_URL= f"{BASE_URL}/api/login"
 @st.dialog("loginForm")
 def login_dialoge ():
     with st.form("Login"):
@@ -74,10 +83,22 @@ def login_dialoge ():
                     "password": password
                 }
                 try:
-                    response = requests.post(login_URL, json=payload, timeout=10)
+                    response = client.post(login_URL, json=payload, timeout=10)
                     if response.status_code== 200:
                         login_response= response.json()
                         st.success(f"Wlcome {login_response['user']['realname']}")
+                        time.sleep(2)
+                        st.switch_page("pages/page2.py")
+
+                    else:
+                        data = response.json()
+                        if "detail" in data:
+                            error = data["detail"]
+                        else:
+                            error = data.get("error", "unexpected error")
+
+                        st.error(error)
+        
                 
                 except requests.exceptions.ConnectionError:
                     st.error("connection failed")

@@ -17,6 +17,8 @@ engine = create_engine(SQLalchemy_Datbase_URL, connect_args={"check_same_thread"
 # why LOCAL?? because it isnt the usual session in the world. it is just a session that i made localy in this program.
 SessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 
+# this function make a session from sessionmaker
+# so we can yield or output it to Routes, and close it.
 def get_db ():
     db = SessionLocal()
 

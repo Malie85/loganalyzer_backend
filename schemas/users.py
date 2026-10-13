@@ -40,11 +40,13 @@ class userResponse(BaseModel):
     realname: str
     username: str
 
-
+# also here we say how to get data from user when login.
 class userLogin(BaseModel):
     username: str = Field(...,min_length=2, max_length=30)
     password: str = Field(...,min_length=8, max_length=64)
 
+# and here we say how to respose when for login route.
+# we use userresponse schama beacause we dont say its id and password.
 class userLoginResponse(BaseModel):
     message: str
     user: userResponse

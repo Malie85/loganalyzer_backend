@@ -1,27 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from argon2 import PasswordHasher
 from sqlalchemy.orm import Session
 
 from models import users as users_model
 from schemas import users as users_schema
 from db.database import engine, SessionLocal, Base, get_db
+from services.session import create_session
 
 
 # using argon hasher to hash password
 password_hasher = PasswordHasher()
 
 register_router = APIRouter()
-
-
-# this function make a session from sessionmaker in database.py
-# so we can yield or output it to Register Rout in below, and close it.
-# def get_db ():
-#     db = SessionLocal()
-
-#     try:
-#         yield db
-#     finally:
-#         db.close()
 
 # The Register Rout
 # what shape it responses? by response_model
@@ -34,7 +24,7 @@ register_router = APIRouter()
 # what shape it gets? by --> user: users_schema.userRegister
 # in Depends, we say to fast api: go and get a session from get_db and give it to function. so, it depends to get_db as he said.
 # what is session? its just a type hinter . we imported from sqlalchemy orm. dont get this wrong with sessionlocal (I got wrong at first)
-def register_user (user: users_schema.userRegister, db: Session=Depends(get_db)):
+def register_user (user: users_schema.userRegister, response: Response, db: Session=Depends(get_db)):
 
 
     # doing a query in db and search by model of users to finding if same username exists.
@@ -64,6 +54,9 @@ def register_user (user: users_schema.userRegister, db: Session=Depends(get_db))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    create_session(new_user.id,response,db)
+
 
     # finally retuning new user object (without password and id)
     return new_user
