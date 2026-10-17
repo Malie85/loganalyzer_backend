@@ -5,7 +5,8 @@ from fastapi.responses import JSONResponse
 from routes.register import register_router
 from routes.auth import Login_Router
 from routes.me import me
-from db.database import engine, Base
+from routes.logout import logout_router
+from db.database import engine
 from models import users as users_model
 
 #runnig the FAST API
@@ -48,3 +49,4 @@ async def validation_error_handler(
 app.include_router(register_router)
 app.include_router(Login_Router)
 app.include_router(me)
+app.include_router(logout_router)

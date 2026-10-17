@@ -1,10 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from argon2 import PasswordHasher
 from sqlalchemy.orm import Session
-import secrets
-from datetime import datetime, timedelta
 from models import users as users_model
-from models import sessions as user_sessions
 from schemas import users as users_schema
 from db.database import get_db
 from services.session import create_session

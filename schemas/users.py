@@ -51,3 +51,6 @@ class userLoginResponse(BaseModel):
     message: str
     user: userResponse
 
+class logoutResponse(BaseModel):
+    message: str
+

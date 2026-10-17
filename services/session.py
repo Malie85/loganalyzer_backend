@@ -1,5 +1,4 @@
 from models import sessions as user_sessions
-from db.database import get_db
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from fastapi import Response

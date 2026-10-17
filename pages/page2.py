@@ -1,5 +1,4 @@
 import streamlit as st
-import requests
 from services.api_client import BASE_URL,get_client
 
 client = get_client()
