@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from models import users as users_model
 from schemas import users as users_schema
-from db.database import engine, SessionLocal, Base, get_db
+from db.database import get_db
 from services.session import create_session
 
 

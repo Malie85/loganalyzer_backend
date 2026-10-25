@@ -1,6 +1,6 @@
 from models import sessions as user_sessions
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from fastapi import Response
 import secrets
 
@@ -12,8 +12,8 @@ def create_session(user_id: int, response: Response, db:Session):
     new_session = user_sessions.Session(
         sessionID = session_id,
         sessionOwner = user_id,
-        createdAt = datetime.now(),
-        expiredAt = datetime.now() + timedelta(hours=7)
+        createdAt = datetime.now(timezone.utc),
+        expiredAt = datetime.now(timezone.utc) + timedelta(hours=8)
     )
 
     # COMMIT

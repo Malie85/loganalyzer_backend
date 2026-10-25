@@ -1,17 +1,42 @@
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware import Middleware
+from starlette.middleware.body_limit import RequestBodyLimitMiddleware
 
 from routes.register import register_router
 from routes.auth import Login_Router
 from routes.me import me
 from routes.logout import logout_router
+from routes.upload import upload_router
 from db.database import engine
 from models import users as users_model
 
+# what is this?????? search later...............
+MAX_FILE_SIZE = 50 * 1024 * 1024
+MAX_REQUEST_SIZE = MAX_FILE_SIZE + 1 * 1024 * 1024
 #runnig the FAST API
-app = FastAPI()
+app = FastAPI(
+    middleware=[
+        Middleware(
+            RequestBodyLimitMiddleware,
+            max_body_size=MAX_REQUEST_SIZE,
+        )
+    ]
+)
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://127.0.0.1:5500",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# ...........................
 # creating tables in database
 users_model.Base.metadata.create_all(bind=engine)
 
@@ -50,3 +75,4 @@ app.include_router(register_router)
 app.include_router(Login_Router)
 app.include_router(me)
 app.include_router(logout_router)
+app.include_router(upload_router)
